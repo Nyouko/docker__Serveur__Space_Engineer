@@ -17,12 +17,12 @@ sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH}
 
 # update world save path
 CURRENT_WORLDNAME=$(grep -oEi '<WorldName>(.*)</WorldName>' ${CONFIG_PATH} | sed -E "s=<WorldName>|</WorldName>==g")
-SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${CURRENT_WORLDNAME}";
+SAVE_PATH="Z:\\appdata\\space-engineers\\instances\\${INSTANCE_NAME}\\Saves\\${CURRENT_WORLDNAME}";
 sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" ${CONFIG_PATH}
 
 echo "---------------------------------UPDATE PLUGINS------------------------------"
-PLUGIN_COUNT=$(ls -1 ${PLUGIN_DIR}/*.dll | wc -l)
-echo "Found ${PLUGIN_COUNT} plugins in ${PLUGIN_DIR}"
+PLUGIN_COUNT=$(ls -1 ${PLUGIN_DIR}/*.dll 2> /dev/null | wc -l)
+echo "Found ${PLUGIN_COUNT} plugin(s) in ${PLUGIN_DIR}"
 
 if [ "${PLUGIN_COUNT}" -gt "0" ]; then 
   PLUGINS_STRING="<Plugins>$(ls -1 /appdata/space-engineers/plugins/*.dll |\
@@ -45,8 +45,9 @@ echo "SAVE_PATH=$SAVE_PATH"
 wine --version
 echo "----------------------------------START GAME---------------------------------"
 # mkdir first to fix possible no such file or directory on rm
-mkdir -p ${INSTANCES_DIR}/${INSTANCE_NAME}
-rm ${INSTANCES_DIR}/${INSTANCE_NAME}/*.log
+mkdir -p ${INSTANCES_DIR}/${INSTANCE_NAME}/Old-Logs
+mv ${INSTANCES_DIR}/${INSTANCE_NAME}/*.log ${INSTANCES_DIR}/${INSTANCE_NAME}/Old-Logs/ 2> /dev/null
+
 cd ${GAME_DIR}/DedicatedServer64/
 wine SpaceEngineersDedicated.exe -noconsole -ignorelastsession -path Z:\\appdata\\space-engineers\\instances\\${INSTANCE_NAME}
 echo "-----------------------------------END GAME----------------------------------"
