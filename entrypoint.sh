@@ -19,7 +19,15 @@ CURRENT_IP=$(grep -oEi '<IP>(.*)</IP>' ${CONFIG_PATH} | sed -E "s=<IP>|</IP>==g"
 sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH}
 
 # update world save path
-CURRENT_WORLDNAME=$(grep -oEi '<WorldName>(.*)</WorldName>' ${CONFIG_PATH} | sed -E "s=<WorldName>|</WorldName>==g")
+OLD_WORLDNAME=$(grep -oEi '<WorldName>(.*)</WorldName>' ${CONFIG_PATH} | sed -E "s=<WorldName>|</WorldName>==g")
+if [ -z "$WORLDNAME" ]; then
+  WORLDNAME=OLD_WORLDNAME
+fi
+if [ -z "$WORLDNAME" ]; then
+  WORLDNAME="World";
+fi
+sed -i "s=<WorldName>.*</WorldName>=<WorldName>${WORLDNAME}</WorldName>=g" ${CONFIG_PATH}
+
 SAVE_PATH="Z:\\appdata\\space-engineers\\instances\\${INSTANCE_NAME}\\Saves\\${CURRENT_WORLDNAME}";
 sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" ${CONFIG_PATH}
 
