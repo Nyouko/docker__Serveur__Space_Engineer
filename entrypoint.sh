@@ -1,11 +1,14 @@
 #!/bin/bash
+
 # VARIABLES
+if [ -z "$INSTANCE_NAME" ]; then
+  INSTANCE_NAME="Instance"
+fi
 GAME_DIR="/appdata/space-engineers/SpaceEngineersDedicated"
 INSTANCES_DIR="/appdata/space-engineers/instances"
 PLUGIN_DIR="/appdata/space-engineers/plugins"
 CONFIG_PATH="${INSTANCES_DIR}/${INSTANCE_NAME}/SpaceEngineers-Dedicated.cfg"
 INSTANCE_IP=$(hostname -I | sed "s= ==g")
-
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
