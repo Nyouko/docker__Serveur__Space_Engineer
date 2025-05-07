@@ -18,7 +18,7 @@ echo "-------------------------------INSTALL & UPDATE---------------------------
 mkdir -p "${INSTANCE_DIR}/Old-Logs" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
 
 if [ -d "${INSTANCE_DIR}/Saves/${WORLD_NAME}" ] && [ -z "$(ls -A "${INSTANCE_DIR}/Saves/${WORLD_NAME}")" ]; then
-  cp -r "${GAME_DIR}/Content/Home System/." "${INSTANCE_DIR}/Saves/${WORLD_NAME}/" 2> /dev/null
+  cp -r "${GAME_DIR}/Content/Home System/." "${INSTANCE_DIR}/Saves/${WORLD_NAME}/"
 fi
 
 echo "---------------------------------UPDATE CONFIG-------------------------------"
