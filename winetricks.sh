@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # As docker can only run one process we have to use this script to get Xvfb running while calling winetricks stuff
 Xvfb :5 -screen 0 1024x768x16 &

@@ -31,7 +31,7 @@ RUN \
   apt-get install -qq -y \
   libfaudio0:i386 \
   libfaudio0 
-RUN \ 
+RUN \
   apt-get install -qq -y --install-recommends \
   winehq-${WINEBRANCH}=${WINEVERSION} \
   wine-${WINEBRANCH}-i386=${WINEVERSION} \
@@ -60,4 +60,4 @@ COPY healthcheck.sh /root/
 HEALTHCHECK --interval=60s --timeout=60s --start-period=600s --retries=3 CMD [ "/root/healthcheck.sh" ]
 
 COPY entrypoint.sh /root/
-ENTRYPOINT /root/entrypoint.sh
+ENTRYPOINT ["/root/entrypoint.sh"]
