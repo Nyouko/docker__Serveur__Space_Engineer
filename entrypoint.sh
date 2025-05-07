@@ -7,29 +7,40 @@ fi
 if [ -z "$WORLD_NAME" ]; then
   WORLD_NAME="World"
 fi
+if [ -z "$WORLD_TEMPLATE" ]; then
+  WORLD_TEMPLATE="Home System"
+fi
 GAME_DIR="/appdata/space-engineers/SpaceEngineersDedicated"
 INSTANCE_DIR="/appdata/space-engineers/instances/${INSTANCE_NAME}"
 PLUGIN_DIR="/appdata/space-engineers/plugins"
 CONFIG_PATH="${INSTANCE_DIR}/SpaceEngineers-Dedicated.cfg"
-INSTANCE_IP=$(hostname -I | sed "s= ==g")
+#INSTANCE_IP=$(hostname -I | sed "s= ==g")
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
 mkdir -p "${INSTANCE_DIR}/Old-Logs" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
 
 if [ -d "${INSTANCE_DIR}/Saves/${WORLD_NAME}" ] && [ -z "$(ls -A "${INSTANCE_DIR}/Saves/${WORLD_NAME}")" ]; then
-  cp -r "${GAME_DIR}/Content/CustomWorlds/Home System/." "${INSTANCE_DIR}/Saves/${WORLD_NAME}/"
+  cp -r "${GAME_DIR}/Content/CustomWorlds/${WORLD_TEMPLATE}/." "${INSTANCE_DIR}/Saves/${WORLD_NAME}/"
 fi
 
 echo "---------------------------------UPDATE CONFIG-------------------------------"
 # update IP to host external ip
 CURRENT_IP=$(grep -oEi '<IP>(.*)</IP>' ${CONFIG_PATH} | sed -E "s=<IP>|</IP>==g") 2> /dev/null
-sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH} 2> /dev/null
+#sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH} 2> /dev/null
+sed -i "s=<IP>.*</IP>=<IP>0.0.0.0</IP>=g" ${CONFIG_PATH} 2> /dev/null
 
 # update world save path
 #CURRENT_WORLDNAME=$(grep -oEi '<WorldName>(.*)</WorldName>' ${CONFIG_PATH} | sed -E "s=<WorldName>|</WorldName>==g")
 SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${WORLD_NAME}";
 sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" ${CONFIG_PATH}  2> /dev/null
+
+# Si la balise n'existait pas, l'insérer après </SessionSettings>
+if ! grep -q "<LoadWorld>" "${CONFIG_PATH}"; then
+  sed -i "/<\/SessionSettings>/a <LoadWorld>${SAVE_PATH}</LoadWorld>" "${CONFIG_PATH}"
+fi
+
+
 
 echo "---------------------------------UPDATE PLUGINS------------------------------"
 PLUGIN_COUNT=$(ls -1 ${PLUGIN_DIR}/*.dll 2> /dev/null | wc -l)
