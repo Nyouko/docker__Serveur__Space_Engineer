@@ -16,7 +16,7 @@ INSTANCE_IP=$(hostname -I | sed "s= ==g")
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
 mkdir -p ${INSTANCE_DIR}/Old-Logs ${INSTANCE_DIR}/Saves/${WORLD_NAME}
-if [ ! -d ${INSTANCE_DIR}/Saves/${WORLD_NAME} ]; then
+if [ -d ${INSTANCE_DIR}/Saves/${WORLD_NAME} ] && [ -z "$(ls -A ${INSTANCE_DIR}/Saves/${WORLD_NAME})" ]; then
   cp -r "${GAME_DIR}/Content/Home System/*" "${INSTANCE_DIR}/Saves/${WORLD_NAME}/" 2> /dev/null
 fi
 
