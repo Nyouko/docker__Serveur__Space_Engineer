@@ -15,6 +15,8 @@ INSTANCE_IP=$(hostname -I | sed "s= ==g")
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
+cp "${GAME_DIR}/Content/Home System" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
+mkdir -p ${INSTANCE_DIR}/Old-Logs
 
 echo "---------------------------------UPDATE CONFIG-------------------------------"
 # update IP to host external ip
@@ -51,7 +53,6 @@ echo "SAVE_PATH=$SAVE_PATH"
 wine --version
 echo "----------------------------------START GAME---------------------------------"
 # mkdir first to fix possible no such file or directory on rm
-mkdir -p ${INSTANCE_DIR}/Old-Logs
 mv ${INSTANCE_DIR}/*.log ${INSTANCE_DIR}/Old-Logs/ 2> /dev/null
 
 cd ${GAME_DIR}/DedicatedServer64/
