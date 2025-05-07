@@ -16,14 +16,14 @@ INSTANCE_IP=$(hostname -I | sed "s= ==g")
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
 if [ ! -d ${INSTANCE_DIR}/Saves/${WORLD_NAME} ]; then
-  cp "${GAME_DIR}/Content/Home System" "${INSTANCE_DIR}/Saves/${WORLD_NAME}" 2> /dev/null
+  cp -r "${GAME_DIR}/Content/Home System/*" "${INSTANCE_DIR}/Saves/${WORLD_NAME}/" 2> /dev/null
 fi
 mkdir -p ${INSTANCE_DIR}/Old-Logs
 
 echo "---------------------------------UPDATE CONFIG-------------------------------"
 # update IP to host external ip
-CURRENT_IP=$(grep -oEi '<IP>(.*)</IP>' ${CONFIG_PATH} | sed -E "s=<IP>|</IP>==g")
-sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH}
+CURRENT_IP=$(grep -oEi '<IP>(.*)</IP>' ${CONFIG_PATH} | sed -E "s=<IP>|</IP>==g") 2> /dev/null
+sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH} 2> /dev/null
 
 # update world save path
 #CURRENT_WORLDNAME=$(grep -oEi '<WorldName>(.*)</WorldName>' ${CONFIG_PATH} | sed -E "s=<WorldName>|</WorldName>==g")
