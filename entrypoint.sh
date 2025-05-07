@@ -15,7 +15,9 @@ INSTANCE_IP=$(hostname -I | sed "s= ==g")
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
-cp "${GAME_DIR}/Content/Home System" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
+if [ ! -d ${INSTANCE_DIR}/Saves/${WORLD_NAME} ]; then
+  cp "${GAME_DIR}/Content/Home System" "${INSTANCE_DIR}/Saves/${WORLD_NAME}" 2> /dev/null
+fi
 mkdir -p ${INSTANCE_DIR}/Old-Logs
 
 echo "---------------------------------UPDATE CONFIG-------------------------------"
@@ -26,7 +28,7 @@ sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH}
 # update world save path
 #CURRENT_WORLDNAME=$(grep -oEi '<WorldName>(.*)</WorldName>' ${CONFIG_PATH} | sed -E "s=<WorldName>|</WorldName>==g")
 SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${WORLD_NAME}";
-sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" ${CONFIG_PATH}
+sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" ${CONFIG_PATH}  2> /dev/null
 
 echo "---------------------------------UPDATE PLUGINS------------------------------"
 PLUGIN_COUNT=$(ls -1 ${PLUGIN_DIR}/*.dll 2> /dev/null | wc -l)
@@ -40,7 +42,7 @@ else
   PLUGINS_STRING="<Plugins />"
 fi
 
-sed -E -i "s=<Plugins />|<Plugins.*Plugins>=${PLUGINS_STRING}=g" ${CONFIG_PATH}
+sed -E -i "s=<Plugins />|<Plugins.*Plugins>=${PLUGINS_STRING}=g" ${CONFIG_PATH} 2> /dev/null
 
 echo "-----------------------------CURRENT CONFIGURATION---------------------------"
 echo "GAME_DIR=$GAME_DIR"
