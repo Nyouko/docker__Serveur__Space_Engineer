@@ -126,5 +126,5 @@ wine --version
 echo "----------------------------------START GAME---------------------------------"
 mv ${INSTANCE_DIR}/*.log ${INSTANCE_DIR}/Old-Logs/ 2> /dev/null
 wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}"
-
+chmod -R 777 {INSTANCE_DIR}
 echo "-----------------------------------END GAME----------------------------------"
