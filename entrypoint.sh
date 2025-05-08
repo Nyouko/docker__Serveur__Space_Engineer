@@ -13,7 +13,7 @@ fi
 if [ "$OFFLINE" = "true" ]; then
   OFFLINE="OFFLINE"
 else
-  OFFLINE="ONLINE"
+  OFFLINE="PUBLIC"
 fi
 if [ "$CREATIVE" = "true" ]; then
   CREATIVE="Creative"
@@ -125,7 +125,6 @@ echo "INSTANCE_DIR=$INSTANCE_DIR"
 wine --version
 echo "----------------------------------START GAME---------------------------------"
 mv ${INSTANCE_DIR}/*.log ${INSTANCE_DIR}/Old-Logs/ 2> /dev/null
-cp ${CONFIG_PATH} ${CONFIG_PATH}.old 2> /dev/null
 wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}"
 
 echo "-----------------------------------END GAME----------------------------------"
