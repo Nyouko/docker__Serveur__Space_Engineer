@@ -20,20 +20,17 @@ if [ "$CREATIVE" = "true" ]; then
 else
   CREATIVE="Survival"
 fi
-if [ "$CROSSPLATFORM" = "true" ]; then
-  CROSSPLATFORM="true"
-else
+if [ ! "$CROSSPLATFORM" = "true" ]; then
   CROSSPLATFORM="false"
 fi
-if [ "$EXPERIMENTALMODE" = "true" ]; then
-  EXPERIMENTALMODE="true"
-else
+if [ ! "$EXPERIMENTALMODE" = "true" ]; then
   EXPERIMENTALMODE="false"
 fi
-if [ "$INGAMESCRIPT" = "true" ]; then
-  INGAMESCRIPT="true"
-else
+if [ ! "$INGAMESCRIPT" = "true" ]; then
   INGAMESCRIPT="false"
+fi
+if [ ! "$PAUSEGAMEWHENEMPTY" = "true" ]; then
+  PAUSEGAMEWHENEMPTY="false"
 fi
 if ! [[ "$NBR_PLAYER" =~ ^[0-9]+$ ]]; then
   NBR_PLAYER=6
@@ -58,7 +55,7 @@ fi
 
 if ! test -e "${CONFIG_PATH}"; then
   echo "-------------------------------Pré-lancement du serveur"
-  wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}"
+  wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}" &> /dev/null
 fi
 echo "---------------------------------UPDATE CONFIG-------------------------------"
 sed -i "s=<IP>.*</IP>=<IP>0.0.0.0</IP>=g" "${CONFIG_PATH}"
@@ -88,6 +85,9 @@ sed -i "s=<ExperimentalMode>.*</ExperimentalMode>=<ExperimentalMode>${EXPERIMENT
 
 echo "EnableIngameScripts: ${INGAMESCRIPT}"
 sed -i "s=<EnableIngameScripts>.*</EnableIngameScripts>=<EnableIngameScripts>${INGAMESCRIPT}</EnableIngameScripts>=g" "${CONFIG_PATH}" "${WORLD_PATH}"
+
+echo "PauseGameWhenEmpty: ${PAUSEGAMEWHENEMPTY}"
+sed -i "s=<PauseGameWhenEmpty>.*</PauseGameWhenEmpty>=<PauseGameWhenEmpty>${PAUSEGAMEWHENEMPTY}</PauseGameWhenEmpty>=g" "${CONFIG_PATH}"
 
 echo "Clear BlockTypeLimits dictionary"
 sed -i '/<dictionary>/,/<\/dictionary>/c\<dictionary />' "${CONFIG_PATH}"

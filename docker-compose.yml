@@ -41,6 +41,7 @@ services:
       CROSSPLATFORM: "true"
       EXPERIMENTALMODE: "true"
       INGAMESCRIPT: "true"
+      PAUSEGAMEWHENEMPTY: "true"
       NBR_PLAYER: "8"
       PUBLIC_IP: "127.0.0.1"
 
