@@ -36,26 +36,51 @@ Do not forget to rename `TestInstance` with your instance name!
 ```yaml
 services:
   se-server:
-    image: devidian/spaceengineers:winestaging
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nyouko/space-engineer:latest
     container_name: se-ds-docker
     restart: unless-stopped
+
     volumes:
-      # left side: your docker-host machine
-      # right side: the paths in the image (!!do not change!!)
+      # Montages persistants : NE PAS modifier les chemins de droite
       - /appdata/space-engineers/plugins:/appdata/space-engineers/plugins
       - /appdata/space-engineers/instances:/appdata/space-engineers/instances
       - /appdata/space-engineers/SpaceEngineersDedicated:/appdata/space-engineers/SpaceEngineersDedicated
       - /appdata/space-engineers/steamcmd:/root/.steam
+
     ports:
+      # Ports en mode host pour compatibilité réseau
       - target: 27016
         published: 27016
         protocol: udp
         mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 8766
+        published: 8766
+        protocol: udp
+        mode: host
+
     environment:
-      - WINEDEBUG=-all
-      - INSTANCE_NAME=TestInstance
-      - PUBLIC_IP=1.2.3.4
-      # public ip required for healthcheck
+      WINEDEBUG: "-all"
+      INSTANCE_NAME: "SE"
+      WORLD_NAME: "World"
+      WORLD_TEMPLATE: "Home System"
+      OFFLINE: "false"
+      CREATIVE: "false"
+      CROSSPLATFORM: "true"
+      EXPERIMENTALMODE: "true"
+      INGAMESCRIPT: "true"
+      NBR_PLAYER: "8"
+      PUBLIC_IP: "127.0.0.1"
+
+    labels:
+      com.nyouko.space-engineers.maintainer: "Nyouko"
+      com.nyouko.space-engineers.description: "Space Engineers Dedicated Server via Wine in Docker"
 ```
 
 ## Build the image yourself from source
