@@ -28,7 +28,7 @@ services:
         mode: host
       - target: 8766
         published: 8766
-        protocol: tcp
+        protocol: udp
         mode: host
 
     environment:
