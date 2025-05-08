@@ -36,36 +36,31 @@ else
   INGAMESCRIPT="false"
 fi
 if ! [[ "$NBR_PLAYER" =~ ^[0-9]+$ ]]; then
-  NBR_PLAYER=4
+  NBR_PLAYER=6
 fi
 GAME_DIR="/appdata/space-engineers/SpaceEngineersDedicated"
 INSTANCE_DIR="/appdata/space-engineers/instances/${INSTANCE_NAME}"
 PLUGIN_DIR="/appdata/space-engineers/plugins"
 WORLD_PATH="${INSTANCE_DIR}/Saves/${WORLD_NAME}/Sandbox_config.sbc"
 CONFIG_PATH="${INSTANCE_DIR}/SpaceEngineers-Dedicated.cfg"
-#INSTANCE_IP=$(hostname -I | sed "s= ==g")
+LAUNCHER="${GAME_DIR}/DedicatedServer64/SpaceEngineersDedicated.exe"
+SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${WORLD_NAME}"
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
-echo "-------------------------------Install of the game"
+echo "-------------------------------Installation of the game"
 /usr/games/steamcmd +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
-cd ${GAME_DIR}/DedicatedServer64/
 mkdir -p "${INSTANCE_DIR}/Old-Logs" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
 
 if [ -d "${INSTANCE_DIR}/Saves/${WORLD_NAME}" ] && [ -z "$(ls -A "${INSTANCE_DIR}/Saves/${WORLD_NAME}")" ]; then
   echo "-------------------------------Chargement du template de la map"
-  cp -r "${GAME_DIR}/Content/CustomWorlds/${WORLD_TEMPLATE}/." "${INSTANCE_DIR}/Saves/${WORLD_NAME}/" &> /dev/null
+  cp -r "${GAME_DIR}/Content/CustomWorlds/${WORLD_TEMPLATE}/." "${INSTANCE_DIR}/Saves/${WORLD_NAME}/"
 fi
 
 if ! test -e "${CONFIG_PATH}"; then
   echo "-------------------------------Pré-lancement du serveur"
-  wine SpaceEngineersDedicated.exe -noconsole -ignorelastsession -path Z:\\appdata\\space-engineers\\instances\\${INSTANCE_NAME} &> /dev/null
-  sleep 5
+  wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}"
 fi
-
 echo "---------------------------------UPDATE CONFIG-------------------------------"
-# update IP to host external ip
-CURRENT_IP=$(grep -oEi '<IP>(.*)</IP>' "${CONFIG_PATH}" | sed -E "s=<IP>|</IP>==g")
-#sed -i "s=<IP>.*</IP>=<IP>${INSTANCE_IP}</IP>=g" ${CONFIG_PATH} 2> /dev/null
 sed -i "s=<IP>.*</IP>=<IP>0.0.0.0</IP>=g" "${CONFIG_PATH}"
 
 echo "GameMode: ${CREATIVE}"
@@ -78,10 +73,12 @@ echo "MaxPlayers: ${NBR_PLAYER}"
 sed -i "s=<MaxPlayers>.*</MaxPlayers>=<MaxPlayers>${NBR_PLAYER}</MaxPlayers>=g" "${CONFIG_PATH}" "${WORLD_PATH}"
 
 echo "ServerName: ${INSTANCE_NAME}"
-sed -i "s=<ServerName />|<ServerName>.*</ServerName>=<ServerName>${INSTANCE_NAME}</ServerName>=g" "${CONFIG_PATH}"
+sed -i "s|<ServerName\s*/>|<ServerName>${INSTANCE_NAME}</ServerName>|g" "${CONFIG_PATH}"
+sed -i "s|<ServerName>.*</ServerName>|<ServerName>${INSTANCE_NAME}</ServerName>|g" "${CONFIG_PATH}"
 
 echo "WorldName: ${WORLD_NAME}"
-sed -i "s=<WorldName />|<WorldName>.*</WorldName>=<WorldName>${WORLD_NAME}</WorldName>=g" "${CONFIG_PATH}"
+sed -i "s|<WorldName\s*/>|<WorldName>${WORLD_NAME}</WorldName>|g" "${CONFIG_PATH}"
+sed -i "s|<WorldName>.*</WorldName>|<WorldName>${WORLD_NAME}</WorldName>|g" "${CONFIG_PATH}"
 
 echo "CrossPlatform: ${CROSSPLATFORM}"
 sed -i "s=<CrossPlatform>.*</CrossPlatform>=<CrossPlatform>${CROSSPLATFORM}</CrossPlatform>=g" "${CONFIG_PATH}"
@@ -93,11 +90,11 @@ echo "EnableIngameScripts: ${INGAMESCRIPT}"
 sed -i "s=<EnableIngameScripts>.*</EnableIngameScripts>=<EnableIngameScripts>${INGAMESCRIPT}</EnableIngameScripts>=g" "${CONFIG_PATH}" "${WORLD_PATH}"
 
 echo "Clear BlockTypeLimits dictionary"
-sed -i "s=<dictionary />|<dictionary>.*</dictionary>=<dictionary />=g" "${CONFIG_PATH}"
+sed -i '/<dictionary>/,/<\/dictionary>/c\<dictionary />' "${CONFIG_PATH}"
+
 
 # update world save path
-SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${WORLD_NAME}"
-sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" "${CONFIG_PATH}"
+sed -E -i "s|<LoadWorld>.*</LoadWorld>|<LoadWorld>${SAVE_PATH}</LoadWorld>|g" "${CONFIG_PATH}"
 
 # Si la balise n'existait pas, l'insérer après </SessionSettings>
 if ! grep -q "<LoadWorld>" "${CONFIG_PATH}"; then
@@ -123,10 +120,12 @@ echo "-----------------------------CURRENT CONFIGURATION------------------------
 echo "GAME_DIR=$GAME_DIR"
 echo "CONFIG_PATH=$CONFIG_PATH"
 echo "SAVE_PATH=$SAVE_PATH"
+echo "INSTANCE_DIR=$INSTANCE_DIR"
 ## END UPDATES ##
 wine --version
 echo "----------------------------------START GAME---------------------------------"
 mv ${INSTANCE_DIR}/*.log ${INSTANCE_DIR}/Old-Logs/ 2> /dev/null
+cp ${CONFIG_PATH} ${CONFIG_PATH}.old 2> /dev/null
+wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}"
 
-wine SpaceEngineersDedicated.exe -noconsole -ignorelastsession -path Z:\\appdata\\space-engineers\\instances\\${INSTANCE_NAME}
 echo "-----------------------------------END GAME----------------------------------"
