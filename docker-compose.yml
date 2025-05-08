@@ -1,42 +1,37 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  spaceengineers:
+  se-server:
     build: .
-    container_name: spaceengineers
+    image: nyouko/space-engineer:latest
+    container_name: se-ds-docker
     restart: unless-stopped
-
-    # Ports requis pour Space Engineers
-    ports:
-      - "27016:27016/udp"   # Game port
-      - "27015:27015/udp"   # Steam query port (optionnel)
-      - "8080:8080/tcp"     # API port
-
     volumes:
-      - ./data/instance:/home/spaceuser/.wine/drive_c/spaceengineers
-      - ./data/config:/home/spaceuser/.config/spaceengineers
-      - ./logs:/home/spaceuser/logs
-
+      # left side: your docker-host machine
+      # right side: the paths in the image (!!do not change!!)
+      - /appdata/space-engineers/plugins:/appdata/space-engineers/plugins
+      - /appdata/space-engineers/instances:/appdata/space-engineers/instances
+      - /appdata/space-engineers/SpaceEngineersDedicated:/appdata/space-engineers/SpaceEngineersDedicated
+      - /appdata/space-engineers/steamcmd:/root/.steam
+    ports:
+      - target: 27016
+        published: 27016
+        protocol: udp
+        mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
     environment:
-      - WINEPREFIX=/home/spaceuser/.wine
-      - DISPLAY=:0
-      - TZ=Europe/Paris  # Adapte à ton fuseau horaire
-
-    healthcheck:
-      test: ["CMD", "/healthcheck.sh"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-    security_opt:
-      - no-new-privileges:true
-
-    cap_drop:
-      - ALL
-
-    read_only: true
-
-    tmpfs:
-      - /tmp
-      - /home/spaceuser/.wine/drive_c/users/spaceuser/Temp
-
+      - WINEDEBUG=-all
+      - INSTANCE_NAME=SE
+      - WORLD_NAME=World
+      - WORLD_TEMPLATE=Home System
+      - OFFLINE=false
+      - CREATIVE=false
+      - CROSSPLATFORM=true
+      - EXPERIMENTALMODE=true
+      - INGAMESCRIPT=true
+      - NBR_PLAYER=8
+      - PUBLIC_IP=127.0.0.1
+      # public ip required for healthcheck
