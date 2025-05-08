@@ -30,7 +30,7 @@ RUN \
   echo steam steam/license note '' | debconf-set-selections && \
   apt-get install -qq -y \
   libfaudio0:i386 \
-  libfaudio0 
+  libfaudio0
 RUN \
   apt-get install -qq -y --install-recommends \
   winehq-${WINEBRANCH}=${WINEVERSION} \
@@ -41,7 +41,7 @@ RUN \
   xvfb \
   cabextract && \
   curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks && \
-  chmod +x /usr/local/bin/winetricks 
+  chmod +x /usr/local/bin/winetricks
 
 # Winetricks (This block uses most of the build time)
 COPY winetricks.sh /root/

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   se-server:
     build: .
-    image: space-engineer:latest
+    image: nyouko/space-engineer:latest
     container_name: se-ds-docker
     restart: unless-stopped
     volumes:
@@ -26,5 +26,12 @@ services:
       - WINEDEBUG=-all
       - INSTANCE_NAME=SE
       - WORLD_NAME=World
+      - WORLD_TEMPLATE=Home System
+      - OFFLINE=false
+      - CREATIVE=false
+      - CROSSPLATFORM=true
+      - EXPERIMENTALMODE=true
+      - INGAMESCRIPT=true
+      - NBR_PLAYER=8
       - PUBLIC_IP=127.0.0.1
       # public ip required for healthcheck
