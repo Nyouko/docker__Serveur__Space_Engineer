@@ -35,13 +35,14 @@ fi
 if ! [[ "$NBR_PLAYER" =~ ^[0-9]+$ ]]; then
   NBR_PLAYER=6
 fi
-GAME_DIR="/appdata/space-engineers/SpaceEngineersDedicated"
-INSTANCE_DIR="/appdata/space-engineers/instances/${INSTANCE_NAME}"
-PLUGIN_DIR="/appdata/space-engineers/plugins"
+GAME_DIR="/mnt/SpaceEngineersDedicated"
+INSTANCE_DIR="/mnt/instances/${INSTANCE_NAME}"
+PLUGIN_DIR="/mnt/plugins"
 WORLD_PATH="${INSTANCE_DIR}/Saves/${WORLD_NAME}/Sandbox_config.sbc"
 CONFIG_PATH="${INSTANCE_DIR}/SpaceEngineers-Dedicated.cfg"
 LAUNCHER="${GAME_DIR}/DedicatedServer64/SpaceEngineersDedicated.exe"
-SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${WORLD_NAME}"
+SAVE_PATH="${INSTANCE_DIR}/Saves/${WORLD_NAME}"
+SAVE_PATH_CONVERT="Z:$(echo "$SAVE_PATH" | sed 's/\//\\\//g')"
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 echo "-------------------------------Installation of the game"
@@ -94,11 +95,11 @@ sed -i '/<dictionary>/,/<\/dictionary>/c\<dictionary />' "${CONFIG_PATH}"
 
 
 # update world save path
-sed -E -i "s|<LoadWorld>.*</LoadWorld>|<LoadWorld>${SAVE_PATH}</LoadWorld>|g" "${CONFIG_PATH}"
+sed -E -i "s|<LoadWorld>.*</LoadWorld>|<LoadWorld>${SAVE_PATH_CONVERT}</LoadWorld>|g" "${CONFIG_PATH}"
 
 # Si la balise n'existait pas, l'insérer après </SessionSettings>
 if ! grep -q "<LoadWorld>" "${CONFIG_PATH}"; then
-  sed -i "/<\/SessionSettings>/a <LoadWorld>${SAVE_PATH}</LoadWorld>" "${CONFIG_PATH}"
+  sed -i "/<\/SessionSettings>/a <LoadWorld>${SAVE_PATH_CONVERT}</LoadWorld>" "${CONFIG_PATH}"
 fi
 
 
@@ -107,7 +108,7 @@ PLUGIN_COUNT=$(ls -1 ${PLUGIN_DIR}/*.dll 2> /dev/null | wc -l)
 echo "Found ${PLUGIN_COUNT} plugin(s) in ${PLUGIN_DIR}"
 
 if [ "${PLUGIN_COUNT}" -gt "0" ]; then
-  PLUGINS_STRING="<Plugins>$(ls -1 /appdata/space-engineers/plugins/*.dll |\
+  PLUGINS_STRING="<Plugins>$(ls -1 ${PLUGIN_DIR}/*.dll |\
   sed -E "s=(.+\.dll)=<string>\1</string>=g" |\
   tr -d "\n" )</Plugins>"
 else

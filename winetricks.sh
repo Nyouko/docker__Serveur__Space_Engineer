@@ -1,10 +1,23 @@
 #!/bin/sh
+set -e
 
-# As docker can only run one process we have to use this script to get Xvfb running while calling winetricks stuff
-Xvfb :5 -screen 0 1024x768x16 &
-env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui 
-env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server wine winecfg /v win10
-env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks corefonts 
-env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks sound=disabled 
-env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q vcrun2019 
-env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q --force dotnet48
+# Démarrer Xvfb
+export DISPLAY=:5
+Xvfb $DISPLAY -screen 0 1024x768x16 &
+sleep 2  # Donne un peu de temps pour que Xvfb démarre
+
+# Variables globales
+export WINEARCH=win64
+export WINEDEBUG=-all
+export WINEDLLOVERRIDES="mscoree=d"
+export WINEPREFIX=${WINEPREFIX:-/srv/wine}
+
+# Initialisation de Wine
+wineboot -i
+winecfg -v win10
+
+# Installation de dépendances avec winetricks
+winetricks -q corefonts
+winetricks sound=disabled
+winetricks -q vcrun2019
+winetricks -q --force dotnet48
