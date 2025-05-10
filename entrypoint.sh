@@ -46,7 +46,9 @@ SAVE_PATH_CONVERT="Z:$(echo "$SAVE_PATH" | sed 's/\//\\\//g')"
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 echo "-------------------------------Installation of the game"
-/opt/steamcmd/steamcmd.sh +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
+winecfg
+wine -i
+steamcmd.sh +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
 mkdir -p "${INSTANCE_DIR}/Old-Logs" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
 
 if [ -d "${INSTANCE_DIR}/Saves/${WORLD_NAME}" ] && [ -z "$(ls -A "${INSTANCE_DIR}/Saves/${WORLD_NAME}")" ]; then
