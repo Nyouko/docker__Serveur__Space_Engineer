@@ -45,10 +45,10 @@ services:
 
     volumes:
       # Montages persistants : NE PAS modifier les chemins de droite
-      - /appdata/space-engineers/plugins:/appdata/space-engineers/plugins
-      - /appdata/space-engineers/instances:/appdata/space-engineers/instances
-      - /appdata/space-engineers/SpaceEngineersDedicated:/appdata/space-engineers/SpaceEngineersDedicated
-      - /appdata/space-engineers/steamcmd:/root/.steam
+      - /space-engineers/plugins:/mnt/plugins
+      - /space-engineers/instances:/mnt/instances
+      - /space-engineers/SpaceEngineersDedicated:/mnt/SpaceEngineersDedicated
+      - /space-engineers/steamcmd:/home/authaurizeduser/Steam
 
     ports:
       # Ports en mode host pour compatibilité réseau
@@ -75,6 +75,7 @@ services:
       CROSSPLATFORM: "true"
       EXPERIMENTALMODE: "true"
       INGAMESCRIPT: "true"
+      PAUSEGAMEWHENEMPTY: "true"
       NBR_PLAYER: "8"
       PUBLIC_IP: "127.0.0.1"
 
