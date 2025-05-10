@@ -46,8 +46,6 @@ SAVE_PATH_CONVERT="Z:$(echo "$SAVE_PATH" | sed 's/\//\\\//g')"
 
 echo "-------------------------------INSTALL & UPDATE------------------------------"
 echo "-------------------------------Installation of the game"
-winecfg
-wine -i
 steamcmd.sh +force_install_dir ${GAME_DIR} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
 mkdir -p "${INSTANCE_DIR}/Old-Logs" "${INSTANCE_DIR}/Saves/${WORLD_NAME}"
 
@@ -128,7 +126,5 @@ echo "INSTANCE_DIR=$INSTANCE_DIR"
 wine --version
 echo "----------------------------------START GAME---------------------------------"
 mv ${INSTANCE_DIR}/*.log ${INSTANCE_DIR}/Old-Logs/ 2> /dev/null
-chmod -R 777 "${INSTANCE_DIR}"
 wine "${LAUNCHER}" -noconsole -ignorelastsession -path "${INSTANCE_DIR}"
-chmod -R 777 "${INSTANCE_DIR}"
 echo "-----------------------------------END GAME----------------------------------"
