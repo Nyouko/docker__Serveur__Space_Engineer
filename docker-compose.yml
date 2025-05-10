@@ -14,7 +14,7 @@ services:
       - /space-engineers/plugins:/mnt/plugins
       - /space-engineers/instances:/mnt/instances
       - /space-engineers/SpaceEngineersDedicated:/mnt/SpaceEngineersDedicated
-      - /space-engineers/steamcmd:/home/authaurizeduser/.steam
+      - /space-engineers/steamcmd:/home/authaurizeduser/Steam
 
     ports:
       # Ports en mode host pour compatibilité réseau
