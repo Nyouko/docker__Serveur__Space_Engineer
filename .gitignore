@@ -1,4 +1,4 @@
 *local*
-.gitignore
-.dockerignore
+/.gitignore
+/.dockerignore
 .idea

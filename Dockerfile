@@ -43,11 +43,20 @@ RUN \
   curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks && \
   chmod +x /usr/local/bin/winetricks
 
+RUN useradd -m -U userauthorized && \
+    chown -R userauthorized:userauthorized /mnt /srv
+COPY --chown=userauthorized:userauthorized healthcheck.sh entrypoint.sh /home/userauthorized/
+
+WORKDIR /home/userauthorized
+USER userauthorized
 # Winetricks (This block uses most of the build time)
-COPY winetricks.sh /root/
+COPY winetricks.sh /home/userauthorized/
 RUN \
-  /root/winetricks.sh && \
-  rm -f /root/winetricks.sh && \
+  /home/userauthorized/winetricks.sh && \
+  rm -f /home/userauthorized/winetricks.sh
+
+USER root
+RUN \
   # Remove stuff we do not need anymore to reduce docker size
   apt-get remove -qq -y \
   gnupg2 \
@@ -56,8 +65,6 @@ RUN \
   apt-get -qq clean autoclean && \
   rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-COPY healthcheck.sh /root/
-HEALTHCHECK --interval=60s --timeout=60s --start-period=600s --retries=3 CMD [ "/root/healthcheck.sh" ]
-
-COPY entrypoint.sh /root/
-ENTRYPOINT ["/root/entrypoint.sh"]
+USER userauthorized
+HEALTHCHECK --interval=60s --timeout=60s --start-period=600s --retries=3 CMD [ "/home/userauthorized/healthcheck.sh" ]
+ENTRYPOINT ["/home/userauthorized/entrypoint.sh"]

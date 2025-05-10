@@ -10,7 +10,7 @@ sleep 2  # Donne un peu de temps pour que Xvfb démarre
 export WINEARCH=win64
 export WINEDEBUG=-all
 export WINEDLLOVERRIDES="mscoree=d"
-export WINEPREFIX=${WINEPREFIX:-/srv/wine}
+export WINEPREFIX="${WINEPREFIX:-/srv/wine}"
 
 # Initialisation de Wine
 wineboot -i
